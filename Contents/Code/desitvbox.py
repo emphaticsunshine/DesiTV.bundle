@@ -21,7 +21,8 @@ def ChannelsMenu(url):
 
 	html = HTML.ElementFromURL(url)
 
-	for item in html.xpath("//div[@id='categories']//a"):
+
+	for item in html.xpath("//ul[@rel='Main Menu']//li//a"):
 		try:
 			# Channel title
 			channel = item.xpath("text()")[0]
@@ -30,6 +31,8 @@ def ChannelsMenu(url):
 			link = item.xpath("@href")[0]
 			if link.startswith("http") == False:
 				link = SITEURL + link
+			
+			#Log("Channel Link: " + link)
 		except:
 			continue
 
@@ -52,18 +55,20 @@ def ChannelsMenu(url):
 @route(PREFIX + '/desitvbox/showsmenu')
 def ShowsMenu(url, title):
 	oc = ObjectContainer(title2=title)
-
+	#Log("Shows Menu: " + url + ":" + title)
 	html = HTML.ElementFromURL(url)
 	
-	for item in html.xpath("//li[@class='categories']//li//a"):
+	for item in html.xpath("//li[contains(@class, 'cat-item')]/a"):
 		try:
 			# Show title
 			show = item.xpath("text()")[0]
-			
+			#Log("show name: " + show)
 			# Show link
 			link = item.xpath("@href")[0]
+			#Log("show link: " + link)
 			if link.startswith("http") == False:
 				link = SITEURL + link
+			#Log("final show link: " + link)	
 		except:
 			continue
 
@@ -86,7 +91,7 @@ def EpisodesMenu(url, title):
 
 	html = HTML.ElementFromURL(pageurl)
 	
-	for item in html.xpath("//div[@id='left-inside']//h2[@class='titles']//a"):
+	for item in html.xpath("//div[@class='item_content']//h4//a"):
 		try:
 			# Episode title
 			episode = unicode(str(item.xpath("text()")[0].strip()))
@@ -106,10 +111,10 @@ def EpisodesMenu(url, title):
 	# Find the total number of pages
 	pages = ' '
 	try:
-		pages = html.xpath("//div[@id='left-inside']//p[@class='pagination']//a//@href")[0]
+		pages = html.xpath("//ul[@class='page-numbers']//li//a[@class='page-numbers']/@href")[0]
 	except:
 		pass
-			
+
 	# Add the next page link if exists
 	if ' ' not in pages:
 		oc.add(DirectoryObject(key=Callback(EpisodesMenu, url=pages, title=title), title=L('Pages')))
@@ -128,7 +133,7 @@ def PlayerLinksMenu(url, title, type):
 	
 	# Add the item to the collection
 	content = HTTP.Request(url).content
-	
+	#Log("PlayerLinksMenu " + url + ":" + title + ":" +  type)
 	if type == "TV":
 		if content.find('Dailymotion') != -1:
 			oc.add(DirectoryObject(key=Callback(EpisodeLinksMenu, url=url, title=title, type='Dailymotion'), title='Dailymotion', thumb=R('icon-dailymotion.png')))
@@ -156,6 +161,7 @@ def EpisodeLinksMenu(url, title, type):
 	
 	# Summary
 	summary = GetSummary(html)
+	#Log("Summary:" + summary)
 	items = GetParts(html, type)
 
 	links = []
@@ -191,11 +197,11 @@ def EpisodeLinksMenu(url, title, type):
 			links.append(URLService.NormalizeURL(link))
 			if link.find('cloudy') != -1 and not isValidCloudyURL(link):
 				videosite = videosite + ' (vid removed)'
-			#Log ('Link: ' + link)
+			Log ('Link: ' + link)
 			oc.add(VideoClipObject(
 				url = link,
 				title = videosite,
-				thumb = Resource.ContentsOfURLWithFallback(thumb, fallback=R(ICON)),				
+				thumb = Resource.ContentsOfURLWithFallback(thumb, fallback=R(ICON)),
 				summary = summary,
 				originally_available_at = originally_available_at))
 
@@ -232,9 +238,10 @@ def GetTvURLSource(url, referer, date=''):
 ####################################################################################################
 
 def GetParts(html, keyword):
-	items = html.xpath("//div[@id='left-inside']//p[contains(b//text(),'"+keyword+"')]//following-sibling::p[1]//a")
+	items = html.xpath("//span[contains(text(),'"+keyword+"')]//following::p[1]//a")
+	#Log("GetParts" + str(len(items)))
 	if len(items) == 0:
-		items = html.xpath("//div[@id='left-inside']//p[contains(span//text(),'"+keyword+"')]//following-sibling::p[1]//a")
+		items = html.xpath("//span[contains(text(),'"+keyword+"')]//following::p[1]//a")
 	return items
 
 ####################################################################################################
@@ -260,9 +267,9 @@ def GetShowDate(title):
 
 def GetSummary(html):
 	try:
-		summary = html.xpath("//div[@class='content']//font[@size='3']/font/text()")[0]
-		summary = summary.replace(" preview: ","",1)
-		summary = summary.replace("Find out in","",1)
+		summary = html.xpath("//h1[@class='entry_title entry-title']/text()")[0]
+		#summary = summary.replace(" preview: ","",1)
+		#summary = summary.replace("Find out in","",1)
 	except:
 		summary = None
 	return summary
