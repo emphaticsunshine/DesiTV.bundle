@@ -250,11 +250,8 @@ def PlayerLinksMenu(url, title, type):
 	# Add the item to the collection
 	if type == "TV":
 		oc.add(DirectoryObject(key=Callback(EpisodeLinksMenu, url=url, title=title, type='LetWatchUS'), title='LetWatchUS', thumb=R('icon-letwatchus.png')))
-		oc.add(DirectoryObject(key=Callback(EpisodeLinksMenu, url=url, title=title, type=L('DailymotionHD')), title=L('DailymotionHD'), thumb=R('icon-dailymotion.png')))
-		oc.add(DirectoryObject(key=Callback(EpisodeLinksMenu, url=url, title=title, type=L('DailymotionDVD')), title=L('DailymotionDVD'), thumb=R('icon-dailymotion.png')))
-		oc.add(DirectoryObject(key=Callback(EpisodeLinksMenu, url=url, title=title, type=L('DailymotionSD')), title=L('DailymotionSD'), thumb=R('icon-dailymotion.png')))
-		oc.add(DirectoryObject(key=Callback(EpisodeLinksMenu, url=url, title=title, type=L('FlashPlayerHD')), title=L('FlashPlayerHD'), thumb=R('icon-flashplayer.png')))
-		oc.add(DirectoryObject(key=Callback(EpisodeLinksMenu, url=url, title=title, type=L('FlashPlayerDVD')), title=L('FlashPlayerDVD'), thumb=R('icon-flashplayer.png')))
+		oc.add(DirectoryObject(key=Callback(MovieLinksMenu, url=url, title=title, type=L('Dailymotion')), title=L('Dailymotion'), thumb=R('icon-dailymotion.png')))
+		oc.add(DirectoryObject(key=Callback(MovieLinksMenu, url=url, title=title, type=L('FlashPlayer')), title=L('FlashPlayer'), thumb=R('icon-flashplayer.png')))
 	elif type == "Movies":
 		oc.add(DirectoryObject(key=Callback(MovieLinksMenu, url=url, title=title, type=L('Dailymotion')), title=L('Dailymotion'), thumb=R('icon-dailymotion.png')))
 		oc.add(DirectoryObject(key=Callback(MovieLinksMenu, url=url, title=title, type=L('FlashPlayer')), title=L('FlashPlayer'), thumb=R('icon-flashplayer.png')))
@@ -331,16 +328,10 @@ def EpisodeLinksMenu(url, title, type):
 	
 	if type == "LetWatchUS":
 		items = GetLetwatchusHD(html)
-	elif type == "Dailymotion HD":
+	elif type == "Dailymotion":
 		items = GetDailymotionHD(html)
-	elif type == "Dailymotion DVD":
-		items = GetDailymotionDVD(html)
-	elif type == "Dailymotion SD":
-		items = GetDailymotionSD(html)
-	elif type == "Flash Player HD":
+	elif type == "Flash Player":
 		items = GetFlashPlayerHD(html)
-	elif type == "Flash Player DVD":
-		items = GetFlashPlayerDVD(html)
 	else:
 		items = None
 
@@ -500,7 +491,7 @@ def GetTvURLSource(url, referer, date=''):
 ####################################################################################################
 
 def GetLetwatchusHD(html):
-	items = html.xpath("//div[@class='content']//b[contains(font/text(),'Letwatch')]/following-sibling::a[count(. | //b[count(//b[contains(font/text(),'Letwatch')]/preceding-sibling::b)+2]/preceding-sibling::a) = count(//b[count(//b[contains(font/text(),'Letwatch')]/preceding-sibling::b)+2]/preceding-sibling::a)]")
+	items = html.xpath("//div[@class='content']//b[contains(font/text(),'Letwatch 720p')]/following-sibling::a[count(. | //b[count(//b[contains(font/text(),'Letwatch')]/preceding-sibling::b)+2]/preceding-sibling::a) = count(//b[count(//b[contains(font/text(),'Letwatch')]/preceding-sibling::b)+2]/preceding-sibling::a)]")
 	if len(items) == 0:
 		items = html.xpath("//div[@class='content hasad']//b[contains(font[@color='Red']//text(), 'Letwatch')]//following-sibling::a")
 	return items
