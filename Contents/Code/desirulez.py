@@ -25,7 +25,7 @@ def TypeMenu(url):
 	
 	# Add the item to the collection
 	oc.add(DirectoryObject(key=Callback(ChannelsMenu, url=url), title=L('Tv'), thumb=R('icon-default.png')))
-	oc.add(DirectoryObject(key=Callback(MovieTypeMenu, url=url), title=L('Movies'), thumb=R('icon-default.png')))
+#	oc.add(DirectoryObject(key=Callback(MovieTypeMenu, url=url), title=L('Movies'), thumb=R('icon-default.png')))
 	
 	# If there are no channels, warn the user
 	if len(oc) == 0:
