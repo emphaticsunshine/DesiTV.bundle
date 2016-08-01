@@ -65,11 +65,14 @@ def ShowsMenu(url, title):
 			#Log("show name: " + show)
 			# Show link
 			link = item.xpath("@href")[0]
+			if "completed-shows" in link:
+				continue
 			#Log("show link: " + link)
 			if link.startswith("http") == False:
 				link = SITEURL + link
-			#Log("final show link: " + link)	
+			#og("final show link: " + link)	
 		except:
+			#Log("In Excpetion")
 			continue
 
 		# Add the found item to the collection
@@ -135,16 +138,14 @@ def PlayerLinksMenu(url, title, type):
 	content = HTTP.Request(url).content
 	#Log("PlayerLinksMenu " + url + ":" + title + ":" +  type)
 	if type == "TV":
-		if content.find('Dailymotion') != -1:
-			oc.add(DirectoryObject(key=Callback(EpisodeLinksMenu, url=url, title=title, type='Dailymotion'), title='Dailymotion', thumb=R('icon-dailymotion.png')))
+#		if content.find('Dailymotion') != -1:
+#			oc.add(DirectoryObject(key=Callback(EpisodeLinksMenu, url=url, title=title, type='Dailymotion'), title='Dailymotion', thumb=R('icon-dailymotion.png')))
 		if content.find('Flash') != -1:
-			oc.add(DirectoryObject(key=Callback(EpisodeLinksMenu, url=url, title=title, type='Flash'), title='Flash', thumb=R('icon-playwire.png')))
-		if content.find('Cloudy') != -1:
-			oc.add(DirectoryObject(key=Callback(EpisodeLinksMenu, url=url, title=title, type='Cloudy'), title='Cloudy', thumb=R('icon-cloudy.png')))
-		if content.find('Letwatch') != -1:
-			oc.add(DirectoryObject(key=Callback(EpisodeLinksMenu, url=url, title=title, type='Letwatch'), title='Letwatch', thumb=R('icon-letwatchus.png')))
-		if content.find('Letwatch 720p HD') != -1:
-			oc.add(DirectoryObject(key=Callback(EpisodeLinksMenu, url=url, title=title, type='Letwatch 720p HD'), title='Letwatch 720p HD', thumb=R('icon-letwatchus.png')))
+			#oc.add(DirectoryObject(key=Callback(EpisodeLinksMenu, url=url, title=title, type='Flash'), title='Flash', thumb=R('icon-playwire.png')))
+			oc = EpisodeLinksMenu(url=url, title=title, type='Flash')
+
+#		if content.find('Letwatch') != -1:
+#			oc.add(DirectoryObject(key=Callback(EpisodeLinksMenu, url=url, title=title, type='Letwatch'), title='Letwatch', thumb=R('icon-letwatchus.png')))
 	# If there are no channels, warn the user
 	if len(oc) == 0:
 		return ObjectContainer(header=title, message=L('PlayerWarning'))
@@ -193,10 +194,8 @@ def EpisodeLinksMenu(url, title, type):
 			originally_available_at = ''
 
 		# Add the found item to the collection
-		if link.find('vidshare') != -1 or link.find('dailymotion') != -1 or link.find('playwire') != -1 or link.find('cloudy') != -1:
+		if link.find('vidshare') != -1 or link.find('dailymotion') != -1 or link.find('playwire') != -1:
 			links.append(URLService.NormalizeURL(link))
-			if link.find('cloudy') != -1 and not isValidCloudyURL(link):
-				videosite = videosite + ' (vid removed)'
 			Log ('Link: ' + link)
 			oc.add(VideoClipObject(
 				url = link,
@@ -226,8 +225,6 @@ def GetTvURLSource(url, referer, date=''):
 		url = html.xpath("//iframe[contains(@src,'dailymotion')]/@src")[0]
 	elif string.find('vidshare') != -1:
 		url = html.xpath("//iframe[contains(@src,'vidshare')]/@src")[0]
-	elif string.find('cloudy') != -1:
-		url = html.xpath("//iframe[contains(@src,'cloudy')]/@src")[0]
 	elif string.find('playwire') != -1:
 		url = html.xpath("//script/@data-config")[0]
 
@@ -284,29 +281,3 @@ def GetThumb(html):
 		thumb = R(ICON)
 	return thumb
 
-####################################################################################################
-
-########################################################################################
-def isValidCloudyURL(url):
-		
-	vurl = False
-	try:
-		# use api www.cloudy.ec/api/player.api.php?'user=undefined&pass=undefined&file={file}&key={key}
-		# https://github.com/Eldorados/script.module.urlresolver/blob/master/lib/urlresolver/plugins/cloudy.py
-		
-		content = unicode(HTTP.Request(url).content)
-		elems = HTML.ElementFromString(content)
-		key = elems.xpath("substring-before(substring-after(//script[@type='text/javascript'][3]//text(),'key: '),',')").replace("\"",'')
-		file = elems.xpath("substring-before(substring-after(//script[@type='text/javascript'][3]//text(),'file:'),',')").replace("\"",'')
-		
-		furl = "http://www.cloudy.ec/api/player.api.php?'user=undefined&pass=undefined&file="+file+"&key="+key
-		
-		content = unicode(HTTP.Request(furl).content)
-		#Log(vurl)
-		if 'error' not in content:
-			vurl = True
-	except:
-		vurl = False
-		
-	#Log("bool --------" + str(vurl))
-	return vurl
