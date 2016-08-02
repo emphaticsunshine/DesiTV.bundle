@@ -56,6 +56,8 @@ def MediaObjectsForURL(url):
 		res = xml.xpath('//a:media/@height', namespaces={'a': 'http://ns.adobe.com/f4m/1.0'})
 		brate = xml.xpath('//a:media/@bitrate', namespaces={'a': 'http://ns.adobe.com/f4m/1.0'})[0]
 		dur = xml.xpath('//a:duration/text()', namespaces={'a': 'http://ns.adobe.com/f4m/1.0'})[0]
+		if(res is None or res == '' or len(res) < 2):
+			res = [480,270]
 	except:
 		pass
 		
