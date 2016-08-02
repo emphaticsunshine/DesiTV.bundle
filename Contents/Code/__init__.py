@@ -1,7 +1,7 @@
 # DesiTV Plex Plugin Version 1.2h1
 import common
 #import desirulez
-#import updater
+import updater
 #import desitvbox
 import desitashan
 
