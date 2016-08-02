@@ -19,14 +19,14 @@
 		<string>http://config.playwire.com/.+</string>
       </array>
     </dict>
-	<key>Cloudy</key>
+	<key>PlayU</key>
     <dict>
       <key>URLPatterns</key>
       <array>
-        <string>http://www.cloudy.ec</string>
-		<string>http://www.cloudy.ec/.+</string>
-		<string>https://www.cloudy.ec</string>
-		<string>https://www.cloudy.ec/.+</string>
+        <string>http://playu.net</string>
+		    <string>http://playu.net/.+</string>
+        <string>http://playu.me</string>
+        <string>http://playu.me/.+</string>
       </array>
     </dict>
   </dict>

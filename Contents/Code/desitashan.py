@@ -1,9 +1,6 @@
 
 import common
-import re
-import time
-import datetime
-from lxml import etree
+#from lxml import etree
 
 
 SITETITLE = 'Desi-Tashan'
@@ -72,19 +69,17 @@ def ShowsMenu(url, title):
 	html = HTML.ElementFromURL(url)
 	
 	for item in html.xpath("//div[contains(@class,'fusion-one-fourth fusion-layout-column fusion-spacing-yes ')]//div[@class='fusion-column-wrapper']//h4//a"):
-		Log("item "+ etree.tostring(item, pretty_print=True))
+		#Log("item "+ etree.tostring(item, pretty_print=True))
 		try:
 			# Show title
 			show = item.xpath("text()")[0]
-			Log("show name: " + show)
+			#Log("show name: " + show)
 			# Show link
 			link = item.xpath("@href")[0]
-			if "completed-shows" in link:
-				continue
 			#Log("show link: " + link)
 			if link.startswith("http") == False:
 				link = SITEURL + link.lstrip('/')
-				Log("final show link: " + link)	
+#				Log("final show link: " + link)	
 		except:
 			#Log("In Excpetion")
 			continue
@@ -127,15 +122,20 @@ def EpisodesMenu(url, title):
 			oc.add(PopupDirectoryObject(key=Callback(PlayerLinksMenu, url=link, title=episode, type=L('Tv')), title=episode))
 	
 	# Find the total number of pages
-	pages = ' '
+	next_page = ' '
 	try:
-		pages = html.xpath("//ul[@class='page-numbers']//li//a[@class='page-numbers']/@href")[0]
+		next_page = html.xpath("//div[@class='pagination clearfix']//a[@class='pagination-next']/@href")[0]
 	except:
 		pass
+	if next_page.startswith("http") == False:
+		if (len(next_page.split('/')) == 3):
+			next_page = pageurl + next_page
+		else:
+			next_page = SITEURL + next_page.lstrip('/')
 
 	# Add the next page link if exists
-	if ' ' not in pages:
-		oc.add(DirectoryObject(key=Callback(EpisodesMenu, url=pages, title=title), title=L('Pages')))
+	if ' ' not in next_page:
+		oc.add(DirectoryObject(key=Callback(EpisodesMenu, url=next_page, title=title), title=L('Pages')))
 	
 	# If there are no channels, warn the user
 	if len(oc) == 0:
@@ -152,13 +152,16 @@ def PlayerLinksMenu(url, title, type):
 	# Add the item to the collection
 	content = HTTP.Request(url).content
 	#Log("PlayerLinksMenu " + url + ":" + title + ":" +  type)
-#	if content.find('Dailymotion') != -1:
-#		oc.add(DirectoryObject(key=Callback(EpisodeLinksMenu, url=url, title=title, type='Dailymotion'), title='Dailymotion', thumb=R('icon-dailymotion.png')))
 	if content.find('Playwire HD') != -1:
 		oc.add(DirectoryObject(key=Callback(EpisodeLinksMenu, url=url, title=title, type='Playwire HD'), title='Playwire HD', thumb=R('icon-playwire.png')))
-#	if content.find('Letwatch') != -1:
-#		oc.add(DirectoryObject(key=Callback(EpisodeLinksMenu, url=url, title=title, type='Letwatch'), title='Letwatch', thumb=R('icon-letwatchus.png')))
-	# If there are no channels, warn the user
+
+	if content.find('PlayU HD') != -1:
+		oc.add(DirectoryObject(key=Callback(EpisodeLinksMenu, url=url, title=title, type='PlayU HD'), title='PlayU HD', thumb=R('icon-playu.png')))
+
+	if content.find('LetWatch HD') != -1:
+		oc.add(DirectoryObject(key=Callback(EpisodeLinksMenu, url=url, title=title, type='LetWatch HD'), title='Letwatch HD', thumb=R('icon-letwatchus.png')))
+
+# If there are no channels, warn the user
 	if len(oc) == 0:
 		return ObjectContainer(header=title, message=L('PlayerWarning'))
 
@@ -174,7 +177,6 @@ def EpisodeLinksMenu(url, title, type):
 	
 	# Summary
 	summary = GetSummary(html)
-	#Log("Summary:" + summary)
 	items = GetParts(html, type)
 
 	links = []
@@ -185,40 +187,30 @@ def EpisodeLinksMenu(url, title, type):
 		try:
 			# Video site
 			videosite = item.xpath("./text()")[0]
-			Log("Video Site: " + videosite)
+			#Log("Video Site: " + videosite)
 			# Video link
 			link = item.xpath("./@href")[0]
-			Log("Link: " + link)
+			#Log("Link: " + link)
 			if link.startswith("http") == False:
 				link = link.lstrip('htp:/')
 				link = 'http://' + link
 			if len(links) > 1 and link.find('Part 1') != -1:
 				break
-			# Show date
-			date = ''
-		#	date = GetShowDate(videosite)
 			# Get video source url and thumb
-			link, thumb = GetTvURLSource(link,url,date)
-			Log("Video Site: " + videosite + " Link: " + link + " Thumb: " + thumb)
+			link, thumb = GetTvURLSource(link,url)
+			#Log("Video Site: " + videosite + " Link: " + link + " Thumb: " + thumb)
 		except:
 			continue
-			
-#		try:
-#			originally_available_at = Datetime.ParseDate(date).date()
-#		except:
-#			originally_available_at = ''
 
 		# Add the found item to the collection
-		if link.find('vidshare') != -1 or link.find('dailymotion') != -1 or link.find('playwire') != -1:
+		if link.find('playu') != -1 or link.find('vidshare') != -1  or link.find('playwire') != -1:
 			links.append(URLService.NormalizeURL(link))
-			Log ('Link: ' + link)
+			#Log ('Link: ' + link)
 			oc.add(VideoClipObject(
 				url = link,
 				title = videosite,
 				thumb = Resource.ContentsOfURLWithFallback(thumb, fallback=R(ICON)),
 				summary = summary))
-#				originally_available_at = originally_available_at))
-
 	
 	# If there are no channels, warn the user
 	if len(oc) == 0:
@@ -228,16 +220,16 @@ def EpisodeLinksMenu(url, title, type):
 
 ####################################################################################################
 
-def GetTvURLSource(url, referer, date=''):
+def GetTvURLSource(url, referer):
 		
 	html = HTML.ElementFromURL(url=url, headers={'Referer': referer})
 	string = HTML.StringFromElement(html)
-	if string.find('dailymotion.com') != -1:
-		url = html.xpath("//iframe[contains(@src,'dailymotion')]/@src")[0]
-	elif string.find('vidshare.com') != -1:
-		url = html.xpath("//iframe[contains(@src,'vidshare')]/@src")[0]
+	if string.find('playu.net') != -1:
+		url = html.xpath("//iframe[contains(@src,'playu.net')]/@src")[0]
+	elif string.find('vidshare.us') != -1:
+		url = html.xpath("//iframe[contains(@src,'vidshare.us')]/@src")[0]
 	elif string.find('playwire.com') != -1:
-		Log("Found Playwire link")
+		#Log("Found Playwire link")
 		url = html.xpath("//script/@data-config")[0]
 	else: 
 		Log("NO KNOWN PLAYER FOUND")
@@ -250,29 +242,7 @@ def GetTvURLSource(url, referer, date=''):
 def GetParts(html, keyword):
 	items = []
 	items = html.xpath("//h2[@class='vidLinks'][contains(text(),'"+keyword+"')]/following-sibling::p[@class='vidLinksContent']")[0]
-#	for item in items:
-		#Log("item = "+item)
-#		Log("item "+ etree.tostring(item, pretty_print=True))
 	return items
-
-####################################################################################################
-
-def GetShowDate(title):
-	# find the date in the show title
-	match = re.search(r'\d{1,2}[thsrdn]+\s\w+\s?\d{4}', title)
-	Log ('date match: ' + match.group())
-	# remove the prefix from date
-	match = re.sub(r'(st|nd|rd|th)', "", match.group(), 1)
-	Log ('remove prefix from match: ' + match)
-	# add space between month and year
-	match = re.sub(r'(\d{1,2}\s\w+)(\d{4})', r'\1 \2', match)
-	Log ('add space to month and year match: ' + match)
-	# strip date to struct
-	date = time.strptime(match, '%d %B %Y')
-	# convert date
-	date = time.strftime('%Y%m%d', date)
-	Log ('Final Date: ' + date)
-	return date
 
 ####################################################################################################
 

@@ -5,7 +5,7 @@ HTTP_HEADERS = {
 	'Accept-Encoding:	gzip, deflate',
 	'Accept-Language:	en-US,en;q=0.5',
 	'Connection:		keep-alive',
-	'Referer:		http://www.vidshare.us',
+	'Referer:		http://playu.net',
 	'User-Agent:		Mozilla/5.0 (Windows NT 6.1; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0'
 }
 
@@ -27,11 +27,11 @@ def MetadataObjectForURL(url):
 		if (jsonValue is None):
 			raise
  		value = demjson.decode(jsonValue)
- 		thumb = value['image']
+ 		thumb = value['image']		
 	except:
 		thumb = url
 		
-	title = 'VidShare Redirect Page'
+	title = 'PlayU Redirect Page'
 	summary = 'Summary info Page'
 	
 	return VideoClipObject(
@@ -56,15 +56,8 @@ def MediaObjectsForURL(url):
  		value = demjson.decode(jsonValue)
  		#Log("sources = "+str(value['sources']))
  		for source in value['sources']:
- 			if source['label'] == 'HD':
- 				hd_url = source['file']
- 			if source['label'] == 'SD':
- 				sd_url = source['file']
-
- 		if(hd_url is not None and "http" in hd_url):
- 			url0 = hd_url
- 		elif(sd_url is not None and "http" in sd_url):
- 			url0 = sd_url
+ 			if source['file'].endswith('.mp4'):
+ 				url0 = source['file']
  		if('duration' in value.keys()):
  			dur = value['duration']
  		else:
@@ -72,15 +65,14 @@ def MediaObjectsForURL(url):
 	except:
 		url0 = url
 	#Log("Video URL = "+url0)
-
 	return [
 		MediaObject(
-			container = Container.FLV,
+			container = Container.MP4,
 			video_codec = VideoCodec.H264,
 			video_resolution = '720',
 			audio_codec = AudioCodec.AAC,
-			audio_channels = 2,
 			duration = int(int(dur) * 1000),
+			audio_channels = 2,
 			optimized_for_streaming = True,
 			parts = [PartObject(key=Callback(PlayVideo, url=url0))]
 		)
