@@ -226,6 +226,7 @@ def GetTvURLSource(url, referer):
 	string = HTML.StringFromElement(html)
 	if string.find('playu.net') != -1:
 		url = html.xpath("//iframe[contains(@src,'playu.net')]/@src")[0]
+		url = url.replace('playu.net','playu.me',1)
 	elif string.find('vidshare.us') != -1:
 		url = html.xpath("//iframe[contains(@src,'vidshare.us')]/@src")[0]
 	elif string.find('playwire.com') != -1:
