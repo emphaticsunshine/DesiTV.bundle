@@ -36,13 +36,11 @@ How To Install
 
 Known Issues
 ==============
-
-- Incorrectly marked videos will not play.
-- Currently only Dailymotion is supported.
-- Some movies will not play, currently depending on where hosted.
+- http://desi-tashan.com is the only site supported for now
+- Currently Playwire HD , PlayU HD and Letuswatch HD links are supported only
 
 Acknowledgements
 ==============
 
 - Credits to [b-slick] (https://forums.plex.tv/index.php/topic/107492-req-indian-tv-shows/): for developing the original code
-
+- More credits to mohit310 and coder-alpha for providing the sevicecode and website scrapper code 
