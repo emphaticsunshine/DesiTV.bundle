@@ -112,7 +112,7 @@ def EpisodesMenu(url, title):
 			# episode link
 			link = item.xpath("@href")[0]
 			if link.startswith("http") == False:
-				link = SITEURL + link
+				link = SITEURL + link.lstrip('/')
 			#Log("Episode: " + episode + " Link: " + link)
 		except:
 			continue
