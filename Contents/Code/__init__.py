@@ -33,7 +33,7 @@ def MainMenu():
   #oc.add(DirectoryObject(key=Callback(desitvbox.ChannelsMenu, url=desitvbox.SITEURL), title=desitvbox.SITETITLE, thumb=R(desitvbox.SITETHUMB)))
   oc.add(DirectoryObject(key=Callback(desitashan.ChannelsMenu, url=desitashan.SITEURL), title=desitashan.SITETITLE, thumb=R(desitashan.SITETHUMB)))
   #oc.add(DirectoryObject(key=Callback(desirulez.TypeMenu, url=desirulez.SITEURL), title=desirulez.SITETITLE, thumb=R(desirulez.SITETHUMB)))
-  #oc.add(DirectoryObject(key = Callback(updater.menu, title='Update Plugin'), title = 'Update Plugin', thumb = R(ICON_UPDATE)))
+  oc.add(DirectoryObject(key = Callback(updater.menu, title='Update Plugin'), title = 'Update Plugin', thumb = R(ICON_UPDATE)))
   #oc.add(PrefsObject(title = 'Preferences', thumb = R(ICON_PREFS)))
   return oc
 
