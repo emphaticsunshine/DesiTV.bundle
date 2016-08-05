@@ -21,15 +21,14 @@ ICON = common.ICON
 
 @route(PREFIX + '/desirulez/typemenu')
 def TypeMenu(url):
-	#oc = ObjectContainer(title2=SITETITLE)
-	oc = ChannelsMenu(url=url)
+	oc = ObjectContainer(title2=SITETITLE)
 	# Add the item to the collection
-	#oc.add(DirectoryObject(key=Callback(ChannelsMenu, url=url), title=L('Tv'), thumb=R('icon-default.png')))
-#	oc.add(DirectoryObject(key=Callback(MovieTypeMenu, url=url), title=L('Movies'), thumb=R('icon-default.png')))
+	oc.add(DirectoryObject(key=Callback(ChannelsMenu, url=url), title=L('Tv'), thumb=R('icon-default.png')))
+	oc.add(DirectoryObject(key=Callback(MovieTypeMenu, url=url), title=L('Movies'), thumb=R('icon-default.png')))
 	
 	# If there are no channels, warn the user
-	#if len(oc) == 0:
-	#	return ObjectContainer(header=title, message=L('TypeWarning'))
+	if len(oc) == 0:
+		return ObjectContainer(header=title, message=L('TypeWarning'))
 
 	return oc
 
@@ -249,9 +248,9 @@ def PlayerLinksMenu(url, title, type):
 	
 	# Add the item to the collection
 	if type == "TV":
-		oc.add(DirectoryObject(key=Callback(EpisodeLinksMenu, url=url, title=title, type='LetWatchUS'), title='LetWatchUS', thumb=R('icon-letwatchus.png')))
-		oc.add(DirectoryObject(key=Callback(EpisodeLinksMenu, url=url, title=title, type=L('Dailymotion')), title=L('Dailymotion'), thumb=R('icon-dailymotion.png')))
-		oc.add(DirectoryObject(key=Callback(EpisodeLinksMenu, url=url, title=title, type=L('FlashPlayer')), title=L('FlashPlayer'), thumb=R('icon-playwire.png')))
+		oc.add(DirectoryObject(key=Callback(EpisodeLinksMenu, url=url, title=title, type=L('Playwire')), title=L('Playwire HD'), thumb=R('icon-playwire.png')))
+		oc.add(DirectoryObject(key=Callback(EpisodeLinksMenu, url=url, title=title, type=L('Playu')), title=L('PlayU HD'), thumb=R('icon-plau.png')))
+		oc.add(DirectoryObject(key=Callback(EpisodeLinksMenu, url=url, title=title, type=L('LetWatchUS')), title=L('LetWatch HD)', thumb=R('icon-letwatchus.png')))
 		
 	# If there are no channels, warn the user
 	if len(oc) == 0:

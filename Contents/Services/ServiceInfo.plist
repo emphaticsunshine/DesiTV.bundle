@@ -24,9 +24,11 @@
       <key>URLPatterns</key>
       <array>
         <string>http://playu.net</string>
-	<string>http://playu.net/.+</string>
+	      <string>http://playu.net/.+</string>
         <string>http://playu.me</string>
         <string>http://playu.me/.+</string>
+        <string>http://dramatime.me</string>
+        <string>http://dramatime.me/.+</string>
         <string>http://dl1.playu.me</string>
         <string>http://dl1.playu.me/.+</string>
         <string>http://dl1.playu.net</string>

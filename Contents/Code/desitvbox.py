@@ -67,7 +67,7 @@ def ShowsMenu(url, title):
 			#Log("show link: " + link)
 			if link.startswith("http") == False:
 				link = SITEURL + link
-			#og("final show link: " + link)	
+			#Log("final show link: " + link)	
 		except:
 			#Log("In Excpetion")
 			continue
@@ -136,7 +136,7 @@ def PlayerLinksMenu(url, title, type):
 	#Log("PlayerLinksMenu " + url + ":" + title + ":" +  type)
 	if type == "TV":
 		if content.find('Flash HD') != -1:
-			oc.add(DirectoryObject(key=Callback(EpisodeLinksMenu, url=url, title=title, type='Flash'), title='Flash', thumb=R('icon-playwire.png')))
+			oc.add(DirectoryObject(key=Callback(EpisodeLinksMenu, url=url, title=title, type='Flash'), title='Playwire HD', thumb=R('icon-playwire.png')))
 		if content.find('Playu HD') != -1:
 			oc.add(DirectoryObject(key=Callback(EpisodeLinksMenu, url=url, title=title, type='Playu'), title='PlayU HD', thumb=R('icon-playu.png')))
 		if content.find('Letwatch HD') != -1:
@@ -176,11 +176,12 @@ def EpisodeLinksMenu(url, title, type):
 				link = 'http://' + link
 			if len(links) > 1 and link.find('Part 1') != -1:
 				break
-
+			Log("Video Site: " + videosite + " Link: " + link )
 			# Get video source url and thumb
-			link, thumb = GetTvURLSource(link,url,date)
+			link, thumb = GetTvURLSource(link,url)
 			Log("Video Site: " + videosite + " Link: " + link + " Thumb: " + thumb)
 		except:
+			Log("In Exception")
 			continue
 
 		# Add the found item to the collection
@@ -201,22 +202,32 @@ def EpisodeLinksMenu(url, title, type):
 
 ####################################################################################################
 
-def GetTvURLSource(url, referer, date=''):
+def GetTvURLSource(url, referer):
 
 	if 'xpressvids.info' in url:
 		url = url.replace('xpressvids.info','dramatime.me')
+	#if url.startswith('http://xpressvids.info/playu.php'):
+	#	url = "http://playu.net/embed-"+(url.split('?id='))[1]+".html"
 		
 	html = HTML.ElementFromURL(url=url, headers={'Referer': referer})
 	string = HTML.StringFromElement(html)
 
 	if string.find('playu.net') != -1:
+		Log("Playu HD link")
 		url = html.xpath("//iframe[contains(@src,'playu.net')]/@src")[0]
 		url = url.replace('playu.net','playu.me',1)
+	elif string.find('playu.me') != -1:
+		Log("Playu HD link")
+		url = html.xpath("//iframe[contains(@src,'playu.me')]/@src")[0]
 	elif string.find('vidshare.us') != -1:
+		Log("Vidshare HD link")
 		url = html.xpath("//iframe[contains(@src,'vidshare.us')]/@src")[0]
 	elif string.find('playwire') != -1:
+		Log("Playwire HD link")
 		url = html.xpath("//script/@data-config")[0]
-
+	else:
+		Log("No links discovered " +string)
+	Log("Found URL = "+url)
 	thumb = GetThumb(html)
 
 	return url, thumb

@@ -19,11 +19,10 @@ def MetadataObjectForURL(url):
 	
 	try:
 		page_data = HTML.ElementFromURL(url)
-	#	keys = page_data.xpath("//script//text()")
 		jsblock = page_data.xpath("//script[contains(text(),'jwplayer(\"vplayer\").setup')]//text()")[0]
 		jsonValue = None
 		jsonValue = ((jsblock.split(');',1)[0]).strip()).lstrip("jwplayer(\"vplayer\").setup(")
-		#Log("JSON Value = "+jsonValue)
+		Log("JSON Value = "+jsonValue)
 		if (jsonValue is None):
 			raise
  		value = demjson.decode(jsonValue)
@@ -43,14 +42,13 @@ def MetadataObjectForURL(url):
 ####################################################################################################
 def MediaObjectsForURL(url):
 
-	#Log("url-----------" + url)
+	Log("url-----------" + url)
 	try:
 		page_data = HTML.ElementFromURL(url)
-		#Log("Page Data = "+page_data)
 		jsblock = page_data.xpath("//script[contains(text(),'jwplayer(\"vplayer\").setup')]//text()")[0]
 		jsonValue = None
 		jsonValue = ((jsblock.split(');',1)[0]).strip()).lstrip("jwplayer(\"vplayer\").setup(")
-		#Log("JSON Value = "+jsonValue)
+		Log("JSON Value = "+jsonValue)
 		if (jsonValue is None):
 			raise
  		value = demjson.decode(jsonValue)
@@ -63,8 +61,9 @@ def MediaObjectsForURL(url):
  		else:
  			dur = '0'
 	except:
+		Log("In Exception")
 		url0 = url
-	#Log("Video URL = "+url0)
+	Log("Video URL = "+url0)
 	return [
 		MediaObject(
 			container = Container.MP4,
