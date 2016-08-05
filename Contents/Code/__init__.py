@@ -2,7 +2,7 @@
 import common
 #import desirulez
 import updater
-#import desitvbox
+import desitvbox
 import desitashan
 
 PREFIX = common.PREFIX
@@ -29,8 +29,7 @@ def Start():
 @handler(PREFIX, NAME, art=ART, thumb=ICON)
 def MainMenu():
   oc = ObjectContainer()
-  #oc = desitvbox.ChannelsMenu(url=desitvbox.SITEURL)
-  #oc.add(DirectoryObject(key=Callback(desitvbox.ChannelsMenu, url=desitvbox.SITEURL), title=desitvbox.SITETITLE, thumb=R(desitvbox.SITETHUMB)))
+  oc.add(DirectoryObject(key=Callback(desitvbox.ChannelsMenu, url=desitvbox.SITEURL), title=desitvbox.SITETITLE, thumb=R(desitvbox.SITETHUMB)))
   oc.add(DirectoryObject(key=Callback(desitashan.ChannelsMenu, url=desitashan.SITEURL), title=desitashan.SITETITLE, thumb=R(desitashan.SITETHUMB)))
   #oc.add(DirectoryObject(key=Callback(desirulez.TypeMenu, url=desirulez.SITEURL), title=desirulez.SITETITLE, thumb=R(desirulez.SITETHUMB)))
   #oc.add(DirectoryObject(key = Callback(updater.menu, title='Update Plugin'), title = 'Update Plugin', thumb = R(ICON_UPDATE)))

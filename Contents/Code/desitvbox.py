@@ -1,8 +1,5 @@
 
 import common
-import re
-import time
-import datetime
 
 SITETITLE = 'DesiTvBox'
 SITEURL = 'http://www.desitvbox.me/'
@@ -138,14 +135,13 @@ def PlayerLinksMenu(url, title, type):
 	content = HTTP.Request(url).content
 	#Log("PlayerLinksMenu " + url + ":" + title + ":" +  type)
 	if type == "TV":
-#		if content.find('Dailymotion') != -1:
-#			oc.add(DirectoryObject(key=Callback(EpisodeLinksMenu, url=url, title=title, type='Dailymotion'), title='Dailymotion', thumb=R('icon-dailymotion.png')))
-		if content.find('Flash') != -1:
-			#oc.add(DirectoryObject(key=Callback(EpisodeLinksMenu, url=url, title=title, type='Flash'), title='Flash', thumb=R('icon-playwire.png')))
-			oc = EpisodeLinksMenu(url=url, title=title, type='Flash')
+		if content.find('Flash HD') != -1:
+			oc.add(DirectoryObject(key=Callback(EpisodeLinksMenu, url=url, title=title, type='Flash'), title='Flash', thumb=R('icon-playwire.png')))
+		if content.find('Playu HD') != -1:
+			oc.add(DirectoryObject(key=Callback(EpisodeLinksMenu, url=url, title=title, type='Playu'), title='PlayU HD', thumb=R('icon-playu.png')))
+		if content.find('Letwatch HD') != -1:
+			oc.add(DirectoryObject(key=Callback(EpisodeLinksMenu, url=url, title=title, type='Letwatch'), title='Letwatch HD', thumb=R('icon-letwatchus.png')))
 
-#		if content.find('Letwatch') != -1:
-#			oc.add(DirectoryObject(key=Callback(EpisodeLinksMenu, url=url, title=title, type='Letwatch'), title='Letwatch', thumb=R('icon-letwatchus.png')))
 	# If there are no channels, warn the user
 	if len(oc) == 0:
 		return ObjectContainer(header=title, message=L('PlayerWarning'))
@@ -180,30 +176,22 @@ def EpisodeLinksMenu(url, title, type):
 				link = 'http://' + link
 			if len(links) > 1 and link.find('Part 1') != -1:
 				break
-			# Show date
-			date = GetShowDate(videosite)
+
 			# Get video source url and thumb
 			link, thumb = GetTvURLSource(link,url,date)
 			Log("Video Site: " + videosite + " Link: " + link + " Thumb: " + thumb)
 		except:
 			continue
-			
-		try:
-			originally_available_at = Datetime.ParseDate(date).date()
-		except:
-			originally_available_at = ''
 
 		# Add the found item to the collection
-		if link.find('vidshare') != -1 or link.find('dailymotion') != -1 or link.find('playwire') != -1:
+		if link.find('playu') != -1 or link.find('vidshare') != -1  or link.find('playwire') != -1:
 			links.append(URLService.NormalizeURL(link))
-			Log ('Link: ' + link)
+			#Log ('Link: ' + link)
 			oc.add(VideoClipObject(
 				url = link,
 				title = videosite,
 				thumb = Resource.ContentsOfURLWithFallback(thumb, fallback=R(ICON)),
-				summary = summary,
-				originally_available_at = originally_available_at))
-
+				summary = summary))
 	
 	# If there are no channels, warn the user
 	if len(oc) == 0:
@@ -221,10 +209,11 @@ def GetTvURLSource(url, referer, date=''):
 	html = HTML.ElementFromURL(url=url, headers={'Referer': referer})
 	string = HTML.StringFromElement(html)
 
-	if string.find('dailymotion') != -1:
-		url = html.xpath("//iframe[contains(@src,'dailymotion')]/@src")[0]
-	elif string.find('vidshare') != -1:
-		url = html.xpath("//iframe[contains(@src,'vidshare')]/@src")[0]
+	if string.find('playu.net') != -1:
+		url = html.xpath("//iframe[contains(@src,'playu.net')]/@src")[0]
+		url = url.replace('playu.net','playu.me',1)
+	elif string.find('vidshare.us') != -1:
+		url = html.xpath("//iframe[contains(@src,'vidshare.us')]/@src")[0]
 	elif string.find('playwire') != -1:
 		url = html.xpath("//script/@data-config")[0]
 
@@ -241,24 +230,7 @@ def GetParts(html, keyword):
 		items = html.xpath("//span[contains(text(),'"+keyword+"')]//following::p[1]//a")
 	return items
 
-####################################################################################################
 
-def GetShowDate(title):
-	# find the date in the show title
-	match = re.search(r'\d{1,2}[thsrdn]+\s\w+\s?\d{4}', title)
-	Log ('date match: ' + match.group())
-	# remove the prefix from date
-	match = re.sub(r'(st|nd|rd|th)', "", match.group(), 1)
-	Log ('remove prefix from match: ' + match)
-	# add space between month and year
-	match = re.sub(r'(\d{1,2}\s\w+)(\d{4})', r'\1 \2', match)
-	Log ('add space to month and year match: ' + match)
-	# strip date to struct
-	date = time.strptime(match, '%d %B %Y')
-	# convert date
-	date = time.strftime('%Y%m%d', date)
-	Log ('Final Date: ' + date)
-	return date
 
 ####################################################################################################
 
