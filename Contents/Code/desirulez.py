@@ -22,6 +22,7 @@ ICON = common.ICON
 @route(PREFIX + '/desirulez/typemenu')
 def TypeMenu(url):
 	oc = ObjectContainer(title2=SITETITLE)
+	
 	# Add the item to the collection
 	oc.add(DirectoryObject(key=Callback(ChannelsMenu, url=url), title=L('Tv'), thumb=R('icon-default.png')))
 	oc.add(DirectoryObject(key=Callback(MovieTypeMenu, url=url), title=L('Movies'), thumb=R('icon-default.png')))
@@ -248,9 +249,15 @@ def PlayerLinksMenu(url, title, type):
 	
 	# Add the item to the collection
 	if type == "TV":
-		oc.add(DirectoryObject(key=Callback(EpisodeLinksMenu, url=url, title=title, type=L('Playwire')), title=L('Playwire HD'), thumb=R('icon-playwire.png')))
-		oc.add(DirectoryObject(key=Callback(EpisodeLinksMenu, url=url, title=title, type=L('Playu')), title=L('PlayU HD'), thumb=R('icon-plau.png')))
-		oc.add(DirectoryObject(key=Callback(EpisodeLinksMenu, url=url, title=title, type=L('LetWatchUS')), title=L('LetWatch HD)', thumb=R('icon-letwatchus.png')))
+		oc.add(DirectoryObject(key=Callback(EpisodeLinksMenu, url=url, title=title, type='LetWatchUS'), title='LetWatchUS', thumb=R('icon-letwatchus.png')))
+		oc.add(DirectoryObject(key=Callback(EpisodeLinksMenu, url=url, title=title, type=L('DailymotionHD')), title=L('DailymotionHD'), thumb=R('icon-dailymotion.png')))
+		oc.add(DirectoryObject(key=Callback(EpisodeLinksMenu, url=url, title=title, type=L('DailymotionDVD')), title=L('DailymotionDVD'), thumb=R('icon-dailymotion.png')))
+		oc.add(DirectoryObject(key=Callback(EpisodeLinksMenu, url=url, title=title, type=L('DailymotionSD')), title=L('DailymotionSD'), thumb=R('icon-dailymotion.png')))
+		oc.add(DirectoryObject(key=Callback(EpisodeLinksMenu, url=url, title=title, type=L('FlashPlayerHD')), title=L('FlashPlayerHD'), thumb=R('icon-flashplayer.png')))
+		oc.add(DirectoryObject(key=Callback(EpisodeLinksMenu, url=url, title=title, type=L('FlashPlayerDVD')), title=L('FlashPlayerDVD'), thumb=R('icon-flashplayer.png')))
+	elif type == "Movies":
+		oc.add(DirectoryObject(key=Callback(MovieLinksMenu, url=url, title=title, type=L('Dailymotion')), title=L('Dailymotion'), thumb=R('icon-dailymotion.png')))
+		oc.add(DirectoryObject(key=Callback(MovieLinksMenu, url=url, title=title, type=L('FlashPlayer')), title=L('FlashPlayer'), thumb=R('icon-flashplayer.png')))
 		
 	# If there are no channels, warn the user
 	if len(oc) == 0:
@@ -324,10 +331,16 @@ def EpisodeLinksMenu(url, title, type):
 	
 	if type == "LetWatchUS":
 		items = GetLetwatchusHD(html)
-	elif type == "Dailymotion":
+	elif type == "Dailymotion HD":
 		items = GetDailymotionHD(html)
-	elif type == "Flash Player":
+	elif type == "Dailymotion DVD":
+		items = GetDailymotionDVD(html)
+	elif type == "Dailymotion SD":
+		items = GetDailymotionSD(html)
+	elif type == "Flash Player HD":
 		items = GetFlashPlayerHD(html)
+	elif type == "Flash Player DVD":
+		items = GetFlashPlayerDVD(html)
 	else:
 		items = None
 
@@ -371,7 +384,7 @@ def EpisodeLinksMenu(url, title, type):
 				originally_available_at = originally_available_at))
 		elif link.find('dailymotion') != -1:
 			links.append(URLService.NormalizeURL(link))
-			#Log ('Dailymotion Link: ' + link)
+			Log ('Dailymotion Link: ' + link)
 			oc.add(VideoClipObject(
 				url = link,
 				title = videosite,
@@ -487,7 +500,7 @@ def GetTvURLSource(url, referer, date=''):
 ####################################################################################################
 
 def GetLetwatchusHD(html):
-	items = html.xpath("//div[@class='content']//b[contains(font/text(),'Letwatch 720p')]/following-sibling::a[count(. | //b[count(//b[contains(font/text(),'Letwatch')]/preceding-sibling::b)+2]/preceding-sibling::a) = count(//b[count(//b[contains(font/text(),'Letwatch')]/preceding-sibling::b)+2]/preceding-sibling::a)]")
+	items = html.xpath("//div[@class='content']//b[contains(font/text(),'Letwatch')]/following-sibling::a[count(. | //b[count(//b[contains(font/text(),'Letwatch')]/preceding-sibling::b)+2]/preceding-sibling::a) = count(//b[count(//b[contains(font/text(),'Letwatch')]/preceding-sibling::b)+2]/preceding-sibling::a)]")
 	if len(items) == 0:
 		items = html.xpath("//div[@class='content hasad']//b[contains(font[@color='Red']//text(), 'Letwatch')]//following-sibling::a")
 	return items
