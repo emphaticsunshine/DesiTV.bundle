@@ -141,6 +141,13 @@ def PlayerLinksMenu(url, title, type):
 			oc.add(DirectoryObject(key=Callback(EpisodeLinksMenu, url=url, title=title, type='Playu'), title='PlayU HD', thumb=R('icon-playu.png')))
 		if content.find('Letwatch HD') != -1:
 			oc.add(DirectoryObject(key=Callback(EpisodeLinksMenu, url=url, title=title, type='Letwatch'), title='Letwatch HD', thumb=R('icon-letwatchus.png')))
+		if len(oc) == 0:
+			if content.find('Flash') != -1:
+				oc.add(DirectoryObject(key=Callback(EpisodeLinksMenu, url=url, title=title, type='Flash'), title='Playwire HD', thumb=R('icon-playwire.png')))
+			if content.find('Playu') != -1:
+				oc.add(DirectoryObject(key=Callback(EpisodeLinksMenu, url=url, title=title, type='Playu'), title='PlayU HD', thumb=R('icon-playu.png')))
+			if content.find('Letwatch') != -1:
+				oc.add(DirectoryObject(key=Callback(EpisodeLinksMenu, url=url, title=title, type='Letwatch'), title='Letwatch HD', thumb=R('icon-letwatchus.png')))
 
 	# If there are no channels, warn the user
 	if len(oc) == 0:
