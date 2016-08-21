@@ -36,7 +36,7 @@ How To Install
 
 Known Issues
 ==============
-- http://desi-tashan.com is the only site supported for now
+- http://desi-tashan.com and http://www.desitvbox.me/ are the only site supported for now
 - Currently Playwire HD , PlayU HD and Letuswatch HD links are supported only
 
 Acknowledgements
