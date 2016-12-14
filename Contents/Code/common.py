@@ -1,7 +1,7 @@
 ################################################################################
 TITLE = L('Title')
 VERSION = '0.10' # Release notation (x.y - where x is major and y is minor)
-GITHUB_REPOSITORY = 'hussamnasir/DesiTV.bundle'
+GITHUB_REPOSITORY = 'emphaticsunshine/DesiTV.bundle'
 PREFIX = "/video/desitv"
 ################################################################################
 
