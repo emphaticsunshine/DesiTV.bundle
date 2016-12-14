@@ -28,7 +28,7 @@ def ChannelsMenu(url):
 			link = item.xpath("@href")[0]
 			if link.startswith("http") == False:
 				link = SITEURL + link
-			
+
 			#Log("Channel Link: " + link)
 		except:
 			continue
@@ -40,13 +40,13 @@ def ChannelsMenu(url):
 
 		if channel.lower() in common.GetSupportedChannels():
 			oc.add(DirectoryObject(key=Callback(ShowsMenu, url=link, title=channel), title=channel, thumb=image))
-		
+
 	# If there are no channels, warn the user
 	if len(oc) == 0:
 		return ObjectContainer(header=SITETITLE, message=L('ChannelWarning'))
 
 	return oc
-	
+
 ####################################################################################################
 
 @route(PREFIX + '/desitvbox/showsmenu')
@@ -54,7 +54,7 @@ def ShowsMenu(url, title):
 	oc = ObjectContainer(title2=title)
 	#Log("Shows Menu: " + url + ":" + title)
 	html = HTML.ElementFromURL(url)
-	
+
 	for item in html.xpath("//li[contains(@class, 'cat-item')]/a"):
 		try:
 			# Show title
@@ -67,14 +67,14 @@ def ShowsMenu(url, title):
 			#Log("show link: " + link)
 			if link.startswith("http") == False:
 				link = SITEURL + link
-			#Log("final show link: " + link)	
+			#Log("final show link: " + link)
 		except:
 			#Log("In Excpetion")
 			continue
 
 		# Add the found item to the collection
 		oc.add(DirectoryObject(key=Callback(EpisodesMenu, url=link, title=show), title=show))
-		
+
 	# If there are no channels, warn the user
 	if len(oc) == 0:
 		return ObjectContainer(header=title, message=L('ShowWarning'))
@@ -90,12 +90,12 @@ def EpisodesMenu(url, title):
 	pageurl = url
 
 	html = HTML.ElementFromURL(pageurl)
-	
+
 	for item in html.xpath("//div[@class='item_content']//h4//a"):
 		try:
 			# Episode title
 			episode = unicode(str(item.xpath("text()")[0].strip()))
-			
+
 			# episode link
 			link = item.xpath("@href")[0]
 			if link.startswith("http") == False:
@@ -107,7 +107,7 @@ def EpisodesMenu(url, title):
 		# Add the found item to the collection
 		if 'Watch Online' in episode:
 			oc.add(PopupDirectoryObject(key=Callback(PlayerLinksMenu, url=link, title=episode, type=L('Tv')), title=episode))
-	
+
 	# Find the total number of pages
 	pages = ' '
 	try:
@@ -118,10 +118,25 @@ def EpisodesMenu(url, title):
 	# Add the next page link if exists
 	if ' ' not in pages:
 		oc.add(DirectoryObject(key=Callback(EpisodesMenu, url=pages, title=title), title=L('Pages')))
-	
+
 	# If there are no channels, warn the user
 	if len(oc) == 0:
 		return ObjectContainer(header=title, message=L('EpisodeWarning'))
+
+	if common_fnc.CheckPin(url=url):
+		oc.add(DirectoryObject(
+			key = Callback(common_fnc.RemovePin, url = url),
+			title = "Remove Pin",
+			summary = 'Removes the current Show from the Pin list',
+			thumb = R(common.ICON_PIN)
+		))
+	else:
+		oc.add(DirectoryObject(
+			key = Callback(common_fnc.AddPin, site = SITETITLE, url = url, title = title),
+			title = "Pin Show",
+			summary = 'Adds the current Show to the Pin list',
+			thumb = R(common.ICON_PIN)
+		))
 
 	return oc
 
@@ -130,7 +145,7 @@ def EpisodesMenu(url, title):
 @route(PREFIX + '/desitvbox/playerlinksmenu')
 def PlayerLinksMenu(url, title, type):
 	oc = ObjectContainer(title2 = unicode(title))
-	
+
 	# Add the item to the collection
 	content = HTTP.Request(url).content
 	#Log("PlayerLinksMenu " + url + ":" + title + ":" +  type)
@@ -162,7 +177,7 @@ def EpisodeLinksMenu(url, title, type):
 	oc = ObjectContainer(title2 = unicode(title))
 
 	html = HTML.ElementFromURL(url)
-	
+
 	# Summary
 	summary = GetSummary(html)
 	#Log("Summary:" + summary)
@@ -171,7 +186,7 @@ def EpisodeLinksMenu(url, title, type):
 	links = []
 
 	for item in items:
-		
+
 		try:
 			# Video site
 			videosite = item.xpath("./text()")[0]
@@ -200,7 +215,7 @@ def EpisodeLinksMenu(url, title, type):
 				title = videosite,
 				thumb = Resource.ContentsOfURLWithFallback(thumb, fallback=R(ICON)),
 				summary = summary))
-	
+
 	# If there are no channels, warn the user
 	if len(oc) == 0:
 		return ObjectContainer(header=title, message=L('SourceWarning'))
@@ -215,7 +230,7 @@ def GetTvURLSource(url, referer):
 		url = url.replace('xpressvids.info','dramatime.me')
 	#if url.startswith('http://xpressvids.info/playu.php'):
 	#	url = "http://playu.net/embed-"+(url.split('?id='))[1]+".html"
-		
+
 	html = HTML.ElementFromURL(url=url, headers={'Referer': referer})
 	string = HTML.StringFromElement(html)
 
@@ -238,7 +253,7 @@ def GetTvURLSource(url, referer):
 	thumb = GetThumb(html)
 
 	return url, thumb
-	
+
 ####################################################################################################
 
 def GetParts(html, keyword):

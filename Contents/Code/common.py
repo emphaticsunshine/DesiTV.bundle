@@ -8,6 +8,7 @@ PREFIX = "/video/desitv"
 NAME     = L('Title')
 ART      = 'art-default.jpg'
 ICON     = 'icon-default.png'
+ICON_PIN = "icon-pin.png"
 
 STARPLUS = 'Star Plus'
 ZEETV = 'Zee Tv'
@@ -82,18 +83,18 @@ ZINDAGITV2 = 'Zindagi'
 
 def GetSupportedChannels():
   return [
-            STARPLUS.lower(), 
-            ZEETV.lower(), 
-            SONYTV.lower(), 
-            LIFEOK.lower(), 
-            SAHARAONE.lower(), 
-            STARJALSHA.lower(), 
-            COLORS.lower(), 
-            SABTV.lower(), 
-            STARPRAVAH.lower(), 
-            MTV.lower(), 
-            CHANNELV.lower(), 
-            BINDASSTV.lower(), 
+            STARPLUS.lower(),
+            ZEETV.lower(),
+            SONYTV.lower(),
+            LIFEOK.lower(),
+            SAHARAONE.lower(),
+            STARJALSHA.lower(),
+            COLORS.lower(),
+            SABTV.lower(),
+            STARPRAVAH.lower(),
+            MTV.lower(),
+            CHANNELV.lower(),
+            BINDASSTV.lower(),
             UTVSTARS.lower(),
             STARONE.lower(),
             XINXMEDIA.lower(),
@@ -147,7 +148,7 @@ def GetSupportedChannels():
   ]
 
 ####################################################################################################
-  
+
 def GetThumb(channel):
   icon = R('icon-indiantv.png')
 
@@ -259,5 +260,5 @@ def GetThumb(channel):
     icon = R('icon-epic.png')
 
   return icon
-  
+
 ####################################################################################################
